@@ -65,8 +65,8 @@ Vector2 screenDimensions = {
 };
 
 Vector2 playerPos = {
-  22,
-  12
+  12,
+  19
 };
 
 Vector2 playerDir = {
@@ -76,7 +76,7 @@ Vector2 playerDir = {
 
 Vector2 cameraPlane = {
   0,
-  0.66
+  0.75
 };
 
 double moveSpeed = 0.2;
@@ -166,7 +166,6 @@ void loop() {
 
     Vector2 step;
 
-    int hit = 0;
     int side;
 
     if(rayDir.x < 0){
@@ -185,7 +184,7 @@ void loop() {
       sideDist.y = (mapLoc.y + 1.0 - playerPos.y) * deltaDist.y;
     }
 
-    while(hit == 0){
+    while(true){
       if(sideDist.x < sideDist.y){
         sideDist.x += deltaDist.x;
         mapLoc.x += step.x;
@@ -195,7 +194,7 @@ void loop() {
         mapLoc.y = step.y;
         side = 1;
       }
-      if(world[(int)mapLoc.x][(int)mapLoc.y]) hit = 1;
+      if(world[(int)mapLoc.x][(int)mapLoc.y] > 0) break;
     }
 
     if(side < 1){
@@ -215,7 +214,32 @@ void loop() {
     }
     
     int16_t negativeSpaceHeight = (screenDimensions.y - wallHeight) / 2;
-    int16_t colour = ILI9341_BLUE;
+    int16_t colour;
+
+    switch(world[(int)mapLoc.x][(int)mapLoc.y]){
+      case 1:
+        colour = ILI9341_BLUE;
+        break;
+
+      case 2:
+        colour = ILI9341_RED;
+        break;
+
+      case 3:
+        colour = ILI9341_GREEN;
+        break;
+
+      case 4:
+        colour = ILI9341_YELLOW;
+        break;
+
+      case 5:
+        colour = ILI9341_PURPLE;
+        break;
+
+      default:
+        colour = ILI9341_WHITE;
+    }
 
     if(side > 0){
       colour = colour / 2;
@@ -230,7 +254,7 @@ void loop() {
   ft = millis() - startTime;
   double fps = ft / 1000.0;
 
-  screen.setCursor(5, 5);
+  screen.setCursor(290, 5);
   screen.print(fps);
 
   if(forward){
